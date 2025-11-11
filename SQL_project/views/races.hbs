@@ -1,0 +1,30 @@
+<h2>All Races</h2>
+
+<a href="/races/add" class="btn">+ Add New Race</a>
+
+<table border="1" cellpadding="8">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Surface</th>
+      <th>Distance</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each races}}
+      <tr>
+        <td>{{this.race_id}}</td>
+        <td>{{this.name}}</td>
+        <td>{{this.surface_type}}</td>
+        <td>{{this.distance}}</td>
+        <td>
+          <a href="/races/edit/{{this.race_id}}" class="btn btn-edit">Edit</a>
+          <a> | </a>
+          <a href="/races/delete/{{this.race_id}}" class="btn btn-delete">Delete</a>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

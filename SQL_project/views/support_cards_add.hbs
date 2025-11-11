@@ -1,0 +1,22 @@
+<h2>Add New Support Card</h2>
+
+<form action="/support-cards/add" method="POST">
+  <label for="name">Card Name:</label><br>
+  <input type="text" id="name" name="name" required><br><br>
+
+  <label for="stat_boosted">Stat Boosted:</label><br>
+  <select id="stat_boosted" name="stat_boosted" required>
+    <option value="Speed">Speed</option>
+    <option value="Stamina">Stamina</option>
+    <option value="Power">Power</option>
+    <option value="Guts">Guts</option>
+    <option value="Wisdom">Wisdom</option>
+  </select><br><br>
+
+  <label for="boost_amount">Boost Amount:</label><br>
+  <input type="number" id="boost_amount" name="boost_amount" required><br><br>
+
+  <button type="submit" class="btn">Add Support Card</button>
+  <a href="/support-cards" class="btn btn-cancel">Cancel</a>
+</form>
+
