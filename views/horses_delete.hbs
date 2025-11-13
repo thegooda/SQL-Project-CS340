@@ -1,0 +1,57 @@
+<h2>Delete Horse</h2>
+
+<p>Are you sure you want to delete this horse?</p>
+
+<table border="1" cellpadding="8">
+  <tr>
+    <th>ID</th>
+    <td>{{horse.horse_id}} - {{horse.name}}</td>
+  </tr>
+  <tr>
+    <th>Base Speed</th>
+    <td>{{horse.base_speed}}</td>
+  </tr>
+  <tr>
+    <th>Base Stamina</th>
+    <td>{{horse.base_stamina}}</td>
+  </tr>
+  <tr>
+    <th>Base Gut</th>
+    <td>{{horse.base_gut}}</td>
+  </tr>
+  <tr>
+    <th>Base Strength</th>
+    <td>{{horse.base_strength}}</td>
+  </tr>
+  <tr>
+    <th>Base Wit</th>
+    <td>{{horse.base_wit}}</td>
+  </tr>
+  <tr>
+    <th>Style</th>
+    <td>{{horse.style}}</td>
+  </tr>
+  <tr>
+    <th>Preferred Distance</th>
+    <td>{{horse.preferred_race_distance}}</td>
+  </tr>
+  <tr>
+    <th>Preferred Surface</th>
+    <td>{{horse.preferred_race_surface}}</td>
+  </tr>
+  <tr>
+    <th>Support Card</th>
+    <td>
+      {{#if horse.card_id}}
+        {{horse.card_id}} - {{horse.support_card_name}}
+      {{else}}
+        -
+      {{/if}}
+    </td>
+  </tr>
+</table>
+
+<form method="POST" action="/horses/delete/{{horse.horse_id}}">
+  <button type="submit" class="btn btn-delete">Confirm Delete</button>
+  <a href="/horses" class="btn btn-cancel">Cancel</a>
+</form>
