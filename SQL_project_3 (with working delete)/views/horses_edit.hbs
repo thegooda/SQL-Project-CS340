@@ -1,0 +1,44 @@
+<h2>Edit Horse</h2>
+
+<form action="/horses/edit/{{horse.horse_id}}" method="POST">
+    <label for="name">Horse Name:</label><br>
+    <input type="text" id="name" name="name" value="{{horse.name}}" required><br><br>
+
+    <label for="base_speed">Base Speed:</label><br>
+    <input type="text" id="base_speed" name="base_speed" value="{{horse.base_speed}}" required><br><br>
+
+    <label for="base_stamina">Base Stamina:</label><br>
+    <input type="text" id="base_stamina" name="base_stamina" value="{{horse.base_stamina}}" required><br><br>
+
+    <label for="base_gut">Base Gut:</label><br>
+    <input type="text" id="base_gut" name="base_gut" value="{{horse.base_gut}}" required><br><br>
+
+    <label for="base_strength">Base Strength:</label><br>
+    <input type="text" id="base_strength" name="base_strength" value="{{horse.base_strength}}" required><br><br>
+
+    <label for="base_wit">Base Wit:</label><br>
+    <input type="text" id="base_wit" name="base_wit" value="{{horse.base_wit}}" required><br><br>
+
+    <label for="style">Style:</label><br>
+    <input type="text" id="style" name="style" value="{{horse.style}}" required><br><br>
+
+    <label for="preferred_race_distance">Preferred Distance:</label><br>
+    <select id="preferred_race_distance" name="preferred_race_distance" required>
+        <option value="Short" {{horse.distanceShortSelected}}>Short</option>
+        <option value="Medium" {{horse.distanceMediumSelected}}>Medium</option>
+        <option value="Mile" {{horse.distanceMileSelected}}>Mile</option>
+        <option value="Long" {{horse.distanceLongSelected}}>Long</option>
+    </select><br><br>
+
+    <label for="preferred_race_surface">Preferred Surface:</label><br>
+    <select id="preferred_race_surface" name="preferred_race_surface" required>
+        <option value="Turf" {{horse.surfaceTurfSelected}}>Turf</option>
+        <option value="Dirt" {{horse.surfaceDirtSelected}}>Dirt</option>
+    </select><br><br>
+
+    <label for="card_id">Support Card ID:</label><br>
+    <input type="text" id="card_id" name="card_id" value="{{horse.card_id}}"><br><br>
+
+    <button type="submit" class="btn">Save Changes</button>
+    <a href="/horses" class="btn btn-cancel">Cancel</a>
+</form>

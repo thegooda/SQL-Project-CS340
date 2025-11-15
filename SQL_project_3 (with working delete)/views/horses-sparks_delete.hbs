@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="/style.css">
+
+<h2>Delete Horse-Spark Assignment</h2>
+
+<p>Are you sure you want to delete this assignment?</p>
+
+<table border="1" cellpadding="8">
+  <tr>
+    <th>Horse Spark ID</th>
+    <td>{{assignment.horse_spark_id}}</td>
+  </tr>
+  <tr>
+    <th>Horse</th>
+    <td>{{assignment.horse_id}} - {{assignment.horse_name}}</td>
+  </tr>
+  <tr>
+    <th>Spark</th>
+    <td>{{assignment.spark_id}} - {{assignment.spark_name}}</td>
+  </tr>
+</table>
+
+<form method="POST" action="/horses-sparks/delete/{{assignment.horse_spark_id}}">
+  <button type="submit" class="btn btn-delete">Confirm Delete</button>
+  <a href="/horses-sparks" class="btn btn-cancel">Cancel</a>
+</form>

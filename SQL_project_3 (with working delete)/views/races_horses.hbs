@@ -1,0 +1,29 @@
+<h2>Horses-Races Matrix</h2>
+
+<a href="/races-horses/add" class="btn">+ Add New Races-Horse Relationship</a>
+
+<table border="1" cellpadding="8">
+  <thead>
+    <tr>
+      <th>Race Horse ID</th>
+      <th>Horse ID</th>
+      <th>Race ID</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+<tbody>
+  {{#each entries}}
+    <tr>
+      <td>{{this.race_horse_id}}</td>
+      <td>{{this.horse_id}} - {{this.horse_name}}</td>
+      <td>{{this.race_id}} - {{this.race_name}}</td>
+      <td>
+        <a href="/races-horses/edit/{{this.race_horse_id}}" class="btn btn-edit">Edit</a>
+        <a> | </a>
+        <a href="/races-horses/delete/{{this.race_horse_id}}" class="btn btn-delete">Delete</a>
+      </td>
+    </tr>
+  {{/each}}
+</tbody>
+
+</table>

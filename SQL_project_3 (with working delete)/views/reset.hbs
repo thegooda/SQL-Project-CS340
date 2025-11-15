@@ -1,0 +1,29 @@
+<h2>Reset Database</h2>
+
+<div class="warning-box" style="background-color: #fff3cd; border: 2px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 5px;">
+  <h3 style="color: #856404; margin-top: 0;">⚠️ WARNING</h3>
+  <p style="color: #856404; font-size: 16px;">
+    This action will <strong>permanently delete ALL data</strong> in the database and recreate all tables with sample data.
+  </p>
+  <p style="color: #856404; font-size: 16px;">
+    <strong>This action cannot be undone!</strong>
+  </p>
+</div>
+
+<h3>What will happen:</h3>
+<ul>
+  <li>All horses will be deleted</li>
+  <li>All races will be deleted</li>
+  <li>All support cards will be deleted</li>
+  <li>All sparks will be deleted</li>
+  <li>All race entries will be deleted</li>
+  <li>All horse-spark assignments will be deleted</li>
+  <li>Sample data will be inserted</li>
+</ul>
+
+<form method="POST" action="/reset">
+  <button type="submit" class="btn btn-delete" style="background-color: #dc3545; color: white; padding: 10px 20px; font-size: 16px;">
+    ⚠️ Confirm Reset Database
+  </button>
+  <a href="/" class="btn btn-cancel" style="margin-left: 10px;">Cancel</a>
+</form>
