@@ -7,7 +7,7 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 7878; // Change this to your assigned port
+const PORT = process.env.PORT || 7079; // Change this to your assigned port
 
 // Configure Handlebars
 app.engine('hbs', exphbs.engine({
@@ -519,7 +519,7 @@ app.get('/horses-sparks/edit/:id', async (req, res) => {
     const [horses] = await db.query('SELECT horse_id, name FROM Horses ORDER BY name');
     const [sparks] = await db.query('SELECT spark_id, name FROM Sparks ORDER BY name');
 
-    // ✅ Mark the selected horse and spark
+    // Mark the selected horse and spark
     horses.forEach(horse => {
       horse.selected = horse.horse_id === assignment.horse_id ? 'selected' : '';
     });
@@ -587,42 +587,11 @@ app.get('/reset', (req, res) => {
   res.render('reset', { title: 'Reset Database' });
 });
 
-// I'm leaving the sql to you bud! just left some starting code
-
 // Actually perform the reset
 app.post('/reset', async (req, res) => {
   try {
-    // Drop tables in correct order (child tables first, then parent tables)
-    // await db.query('DROP TABLE IF EXISTS HorsesSparks');
-    // await db.query('DROP TABLE IF EXISTS RacesHorses');
-    // await db.query('DROP TABLE IF EXISTS Horses');
-    // await db.query('DROP TABLE IF EXISTS Support_Cards');
-    // await db.query('DROP TABLE IF EXISTS Sparks');
-    // await db.query('DROP TABLE IF EXISTS Races');
 
-    await db.query(`
-
-    `);
-
-    await db.query(`
-
-    `);
-
-    await db.query(`
-
-    `);
-
-    await db.query(`
-
-    `);
-
-    await db.query(`
-
-    `);
-
-    await db.query(`
-
-    `);
+    await db.query('CALL ResetTables();');
 
     res.redirect('/?reset=success');
   } catch (err) {
