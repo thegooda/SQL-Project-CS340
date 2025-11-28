@@ -2,16 +2,17 @@
     CS340
     Project Step 4 Draft: RESET Stored Procedure
     Team Uma Sim: Tom Haney and Philip Nguyen
-
-    Almost all SQL in this file is directly taken from the DDL file.
 */
 
 -- USE `cs340_[insert your id here]` ;
 USE `cs340_haneyth` ;
 
+DROP PROCEDURE IF EXISTS `ResetTables`;
 DELIMITER //
 CREATE PROCEDURE ResetTables()
 BEGIN
+    -- Most SQL for this procedure taken from the DDL file
+
     -- Drop tables
     DROP TABLE IF EXISTS `HorsesSparks`;
     DROP TABLE IF EXISTS `RacesHorses`;
@@ -167,5 +168,170 @@ BEGIN
     (3, 2, 5),
     (4, 1, 4),
     (5, 1, 1);
+END //
+DELIMITER ;
+
+-- Populate the Horses table
+DROP PROCEDURE IF EXISTS `PopulateHorses`;
+DELIMITER //
+CREATE PROCEDURE PopulateHorses()
+BEGIN
+    SELECT h.horse_id, h.name, h.base_speed, h.base_stamina, h.base_gut, 
+            h.base_strength, h.base_wit, h.style, h.preferred_race_distance, 
+            h.preferred_race_surface, h.card_id, sc.name AS support_card_name
+        FROM Horses h
+        LEFT JOIN Support_Cards sc ON h.card_id = sc.card_id
+        ORDER BY h.name;
+END //
+DELIMITER ;
+
+-- Populate the Races table
+DROP PROCEDURE IF EXISTS `PopulateRaces`;
+DELIMITER //
+CREATE PROCEDURE PopulateRaces()
+BEGIN
+    SELECT race_id, name, surface_type, distance
+      FROM Races
+      ORDER BY name;
+END //
+DELIMITER ;
+
+-- Populate the Support_Cards table
+DROP PROCEDURE IF EXISTS `PopulateSupportCards`;
+DELIMITER //
+CREATE PROCEDURE PopulateSupportCards()
+BEGIN
+    SELECT card_id, name, stat_boosted, boost_amount
+      FROM Support_Cards
+      ORDER BY name;
+END //
+DELIMITER ;
+
+-- Populate the Sparks table
+DROP PROCEDURE IF EXISTS `PopulateSparks`;
+DELIMITER //
+CREATE PROCEDURE PopulateSparks()
+BEGIN
+    SELECT spark_id, name, stat_boosted, star_amount
+      FROM Sparks
+      ORDER BY name;
+END //
+DELIMITER ;
+
+-- Populate the RacesHorses table
+DROP PROCEDURE IF EXISTS `PopulateRacesHorses`;
+DELIMITER //
+CREATE PROCEDURE PopulateRacesHorses()
+BEGIN
+    SELECT rh.race_horse_id, rh.horse_id, h.name AS horse_name,
+            rh.race_id, r.name AS race_name,
+            r.surface_type, r.distance
+    FROM RacesHorses rh
+    JOIN Horses h ON rh.horse_id = h.horse_id
+    JOIN Races r ON rh.race_id = r.race_id
+    ORDER BY rh.race_horse_id;
+END //
+DELIMITER ;
+
+-- Populate the HorsesSparks table
+DROP PROCEDURE IF EXISTS `PopulateHorsesSparks`;
+DELIMITER //
+CREATE PROCEDURE PopulateHorsesSparks()
+BEGIN
+    SELECT hs.horse_spark_id, 
+            h.horse_id, h.name AS horse_name, 
+            s.spark_id, s.name AS spark_name,
+            s.stat_boosted, s.star_amount
+        FROM HorsesSparks hs
+        JOIN Horses h ON hs.horse_id = h.horse_id
+        JOIN Sparks s ON hs.spark_id = s.spark_id
+        ORDER BY h.name, s.name;
+END //
+DELIMITER ;
+
+-- SELECT a specific horse's data by id
+DROP PROCEDURE IF EXISTS `GetHorseById`;
+DELIMITER //
+CREATE PROCEDURE GetHorseById(IN horse_id_input INT)
+BEGIN
+    SELECT h.horse_id, h.name, h.base_speed, h.base_stamina, h.base_gut, 
+            h.base_strength, h.base_wit, h.style, h.preferred_race_distance, 
+            h.preferred_race_surface, h.card_id, sc.name AS support_card_name
+        FROM Horses h
+        LEFT JOIN Support_Cards sc ON h.card_id = sc.card_id
+        WHERE h.horse_id = horse_id_input;
+END //
+DELIMITER ;
+
+-- SELECT a specific race's data by id
+DROP PROCEDURE IF EXISTS `GetRaceById`;
+DELIMITER //
+CREATE PROCEDURE GetRaceById(IN race_id_input INT)
+BEGIN
+    SELECT * FROM Races WHERE race_id = race_id_input;
+END //
+DELIMITER ;
+
+-- SELECT a specific support card's data by id
+DROP PROCEDURE IF EXISTS `GetSupportCardById`;
+DELIMITER //
+CREATE PROCEDURE GetSupportCardById(IN card_id_input INT)
+BEGIN
+    SELECT * FROM Support_Cards WHERE card_id = card_id_input;
+END //
+DELIMITER ;
+
+-- SELECT a specific spark's data by id
+DROP PROCEDURE IF EXISTS `GetSparkById`;
+DELIMITER //
+CREATE PROCEDURE GetSparkById(IN spark_id_input INT)
+BEGIN
+    SELECT * FROM Sparks WHERE spark_id = spark_id_input;
+END //
+DELIMITER ;
+
+-- SELECT just a specific RacesHorses entry by id
+DROP PROCEDURE IF EXISTS `GetRacesHorsesById`;
+DELIMITER //
+CREATE PROCEDURE GetRacesHorsesById(IN race_horse_id_input INT)
+BEGIN
+    SELECT * FROM RacesHorses WHERE race_horse_id = race_horse_id_input;
+END //
+DELIMITER ;
+
+-- SELECT RaceHorses as well as Horse and Race data by race_horse_id
+DROP PROCEDURE IF EXISTS `GetRacesHorsesDetailsById`;
+DELIMITER //
+CREATE PROCEDURE GetRacesHorsesDetailsById(IN race_horse_id_input INT)
+BEGIN
+    SELECT rh.race_horse_id, rh.horse_id, h.name AS horse_name,
+            rh.race_id, r.name AS race_name
+        FROM RacesHorses rh
+        JOIN Horses h ON rh.horse_id = h.horse_id
+        JOIN Races r ON rh.race_id = r.race_id
+        WHERE rh.race_horse_id = race_horse_id_input;
+END //
+DELIMITER ;
+
+-- SELECT just a specific HorsesSparks entry by id
+DROP PROCEDURE IF EXISTS `GetHorsesSparksById`;
+DELIMITER //
+CREATE PROCEDURE GetHorsesSparksById(IN horse_spark_id_input INT)
+BEGIN
+    SELECT * FROM HorsesSparks WHERE horse_spark_id = horse_spark_id_input;
+END //
+DELIMITER ;
+
+-- SELECT HorsesSparks as well as Horse and Spark data by horse_spark_id
+DROP PROCEDURE IF EXISTS `GetHorsesSparksDetailsById`;
+DELIMITER //
+CREATE PROCEDURE GetHorsesSparksDetailsById(IN horse_spark_id_input INT)
+BEGIN
+    SELECT hs.horse_spark_id, hs.horse_id, hs.spark_id, 
+            h.name AS horse_name, s.name AS spark_name
+        FROM HorsesSparks hs
+        JOIN Horses h ON hs.horse_id = h.horse_id
+        JOIN Sparks s ON hs.spark_id = s.spark_id
+        WHERE hs.horse_spark_id = horse_spark_id_input;
 END //
 DELIMITER ;

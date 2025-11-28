@@ -21,7 +21,7 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- USE `cs340_[insert your id here]` ;
-USE `cs340_nguyphi4` ;
+USE `cs340_haneyth` ;
 
 -- -----------------------------------------------------
 -- Table `Support_Cards`

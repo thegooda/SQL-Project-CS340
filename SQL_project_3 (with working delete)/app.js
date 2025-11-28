@@ -7,7 +7,7 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 7079; // Change this to your assigned port
+const PORT = process.env.PORT || 7079; // Change this whatever port to be used
 
 // Configure Handlebars
 app.engine('hbs', exphbs.engine({
@@ -38,14 +38,8 @@ const db = require('./db');
 
 app.get('/horses', async (req, res) => {
     try {
-        const [horses] = await db.query(`
-            SELECT h.horse_id, h.name, h.base_speed, h.base_stamina, h.base_gut, 
-                h.base_strength, h.base_wit, h.style, h.preferred_race_distance, 
-                h.preferred_race_surface, h.card_id, sc.name AS support_card_name
-            FROM Horses h
-            LEFT JOIN Support_Cards sc ON h.card_id = sc.card_id
-            ORDER BY h.name
-        `);
+        const [results] = await db.query(`CALL PopulateHorses();`);
+        const horses = results[0] // The first result should contain the actual data, second is metadata
 
         res.render('horses', { title: 'Browse Horses', horses });
     } catch (err) {
@@ -69,7 +63,8 @@ app.get('/horses/add', async (req, res) => {
 // Edit horse form
 app.get('/horses/edit/:id', async (req, res) => {
   try {
-    const [horseRows] = await db.query(`SELECT * FROM Horses WHERE horse_id = ?`, [req.params.id]);
+    const [results] = await db.query(`CALL GetHorseById(?)`, [req.params.id]);
+    const horseRows = results[0];
     const [cards] = await db.query(`SELECT card_id, name FROM Support_Cards ORDER BY name;`);
     if (horseRows.length === 0) return res.status(404).send('Horse not found');
     res.render('horses_edit', { title: 'Edit Horse', horse: horseRows[0], cards });
@@ -82,15 +77,9 @@ app.get('/horses/edit/:id', async (req, res) => {
 // Render delete horse confirmation page
 app.get('/horses/delete/:id', async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT h.horse_id, h.name, h.base_speed, h.base_stamina, h.base_gut, 
-             h.base_strength, h.base_wit, h.style, h.preferred_race_distance, 
-             h.preferred_race_surface, h.card_id, sc.name AS support_card_name
-      FROM Horses h
-      LEFT JOIN Support_Cards sc ON h.card_id = sc.card_id
-      WHERE h.horse_id = ?
-    `, [req.params.id]);
-    
+    const [results] = await db.query(`CALL GetHorseById(?)`, [req.params.id]);
+    const rows = results[0];
+
     if (rows.length === 0) {
       return res.status(404).send('Horse not found');
     }
@@ -133,11 +122,9 @@ app.post('/horses/delete/:id', async (req, res) => {
 // Browse all races
 app.get('/races', async (req, res) => {
   try {
-    const [races] = await db.query(`
-      SELECT race_id, name, surface_type, distance
-      FROM Races
-      ORDER BY name;
-    `);
+    const [results] = await db.query(`CALL PopulateRaces();`);
+    const races = results[0];
+
     res.render('races', { title: 'Browse Races', races });
   } catch (err) {
     console.error('Error fetching races:', err);
@@ -153,7 +140,8 @@ app.get('/races/add', (req, res) => {
 // Render edit race form
 app.get('/races/edit/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Races WHERE race_id = ?', [req.params.id]);
+    const [results] = await db.query('CALL GetRaceById(?)', [req.params.id]);
+    const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Race not found');
     }
@@ -167,7 +155,8 @@ app.get('/races/edit/:id', async (req, res) => {
 // Render delete confirmation page
 app.get('/races/delete/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Races WHERE race_id = ?', [req.params.id]);
+    const [results] = await db.query('CALL GetRaceById(?)', [req.params.id]);
+    const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Race not found');
     }
@@ -205,11 +194,8 @@ app.post('/races/delete/:id', async (req, res) => {
 // Browse all support cards
 app.get('/support-cards', async (req, res) => {
   try {
-    const [cards] = await db.query(`
-      SELECT card_id, name, stat_boosted, boost_amount
-      FROM Support_Cards
-      ORDER BY name;
-    `);
+    const [results] = await db.query(`CALL PopulateSupportCards();`);
+    const cards = results[0];
     res.render('support_cards', { title: 'Browse Support Cards', cards });
   } catch (err) {
     console.error('Error fetching support cards:', err);
@@ -225,7 +211,8 @@ app.get('/support-cards/add', (req, res) => {
 // Render edit support card form
 app.get('/support-cards/edit/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Support_Cards WHERE card_id = ?', [req.params.id]);
+    const [results] = await db.query('CALL GetSupportCardById(?)', [req.params.id]);
+    const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Support card not found');
     }
@@ -239,7 +226,8 @@ app.get('/support-cards/edit/:id', async (req, res) => {
 // Render delete support card confirmation
 app.get('/support-cards/delete/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Support_Cards WHERE card_id = ?', [req.params.id]);
+    const [results] = await db.query('CALL GetSupportCardById(?)', [req.params.id]);
+    const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Support card not found');
     }
@@ -277,11 +265,8 @@ app.post('/support-cards/delete/:id', async (req, res) => {
 // Browse all sparks
 app.get('/sparks', async (req, res) => {
   try {
-    const [sparks] = await db.query(`
-      SELECT spark_id, name, stat_boosted, star_amount
-      FROM Sparks
-      ORDER BY name;
-    `);
+    const [results] = await db.query(`CALL PopulateSparks();`);
+    const sparks = results[0];
     res.render('sparks', { title: 'Browse Sparks', sparks });
   } catch (err) {
     console.error('Error fetching sparks:', err);
@@ -297,7 +282,8 @@ app.get('/sparks/add', (req, res) => {
 // Render edit spark form
 app.get('/sparks/edit/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Sparks WHERE spark_id = ?', [req.params.id]);
+    const [results] = await db.query(`CALL GetSparkById(?)`, [req.params.id]);
+    const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Spark not found');
     }
@@ -311,7 +297,8 @@ app.get('/sparks/edit/:id', async (req, res) => {
 // Render delete spark confirmation
 app.get('/sparks/delete/:id', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Sparks WHERE spark_id = ?', [req.params.id]);
+    const [results] = await db.query(`CALL GetSparkById(?)`, [req.params.id]);
+    const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Spark not found');
     }
@@ -350,15 +337,8 @@ app.post('/sparks/delete/:id', async (req, res) => {
 // Browse all race entries with horse and race names
 app.get('/races-horses', async (req, res) => {
   try {
-    const [entries] = await db.query(`
-  SELECT rh.race_horse_id, rh.horse_id, h.name AS horse_name,
-         rh.race_id, r.name AS race_name,
-         r.surface_type, r.distance
-    FROM RacesHorses rh
-    JOIN Horses h ON rh.horse_id = h.horse_id
-    JOIN Races r ON rh.race_id = r.race_id
-    ORDER BY rh.race_horse_id;
-`);
+    const [results] = await db.query(`CALL PopulateRacesHorses();`);
+    const entries = results[0];
     res.render('races_horses', { title: 'Manage Horse Race Entries', entries });
   } catch (err) {
     console.error('Error fetching race entries:', err);
@@ -382,10 +362,8 @@ app.get('/races-horses/add', async (req, res) => {
 app.get('/races-horses/edit/:id', async (req, res) => {
   try {
     // 1. Get the race entry
-    const [rows] = await db.query(
-      'SELECT * FROM RacesHorses WHERE race_horse_id = ?',
-      [req.params.id]
-    );
+    const [results] = await db.query(`CALL GetRacesHorsesById(?)`, [req.params.id]);
+    const rows = results[0];
 
     if (rows.length === 0) {
       return res.status(404).send('Race entry not found');
@@ -427,14 +405,8 @@ app.get('/races-horses/edit/:id', async (req, res) => {
 // Render delete confirmation for a specific race entry
 app.get('/races-horses/delete/:id', async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT rh.race_horse_id, rh.horse_id, h.name AS horse_name,
-             rh.race_id, r.name AS race_name
-      FROM RacesHorses rh
-      JOIN Horses h ON rh.horse_id = h.horse_id
-      JOIN Races r ON rh.race_id = r.race_id
-      WHERE rh.race_horse_id = ?
-    `, [req.params.id]);
+    const [results] = await db.query(`CALL GetRacesHorsesDetailsById(?)`, [req.params.id]);
+    const rows = results[0];
 
     if (rows.length === 0) return res.status(404).send('Race entry not found');
 
@@ -471,16 +443,8 @@ app.post('/races-horses/delete/:id', async (req, res) => {
 // Browse all horse-spark assignments
 app.get('/horses-sparks', async (req, res) => {
     try {
-        const [assignments] = await db.query(
-            `SELECT hs.horse_spark_id, 
-                    h.horse_id, h.name AS horse_name, 
-                    s.spark_id, s.name AS spark_name,
-                    s.stat_boosted, s.star_amount
-             FROM HorsesSparks hs
-             JOIN Horses h ON hs.horse_id = h.horse_id
-             JOIN Sparks s ON hs.spark_id = s.spark_id
-             ORDER BY h.name, s.name`
-        );
+        const [results] = await db.query(`CALL PopulateHorsesSparks();`);
+        const assignments = results[0];
         res.render('horses_sparks', { title: 'Manage Horse Sparks', assignments });
     } catch (err) {
         console.error(err);
@@ -503,19 +467,13 @@ app.get('/horses-sparks/add', async (req, res) => {
 // Edit a horse-spark assignment
 app.get('/horses-sparks/edit/:id', async (req, res) => {
   try {
-    const [assignmentRows] = await db.query(
-      `SELECT hs.horse_spark_id, hs.horse_id, hs.spark_id,
-              h.name AS horse_name, s.name AS spark_name
-       FROM HorsesSparks hs
-       JOIN Horses h ON hs.horse_id = h.horse_id
-       JOIN Sparks s ON hs.spark_id = s.spark_id
-       WHERE hs.horse_spark_id = ?`,
-      [req.params.id]
-    );
+    const [results] = await db.query('CALL GetRacesHorsesById(?)', [req.params.id]);
+    const assignmentRows = results[0];
 
     if (assignmentRows.length === 0) return res.status(404).send('Assignment not found');
 
     const assignment = assignmentRows[0];
+
     const [horses] = await db.query('SELECT horse_id, name FROM Horses ORDER BY name');
     const [sparks] = await db.query('SELECT spark_id, name FROM Sparks ORDER BY name');
 
@@ -543,15 +501,8 @@ app.get('/horses-sparks/edit/:id', async (req, res) => {
 // Delete a horse-spark assignment
 app.get('/horses-sparks/delete/:id', async (req, res) => {
     try {
-        const [assignmentRows] = await db.query(
-            `SELECT hs.horse_spark_id, hs.horse_id, hs.spark_id, 
-                    h.name AS horse_name, s.name AS spark_name
-            FROM HorsesSparks hs
-            JOIN Horses h ON hs.horse_id = h.horse_id
-            JOIN Sparks s ON hs.spark_id = s.spark_id
-            WHERE hs.horse_spark_id = ?`,
-            [req.params.id]
-        );
+        const [results] = await db.query(`CALL GetHorsesSparksDetailsById(?)`,[req.params.id]);
+        const assignmentRows = results[0];
 
         if (assignmentRows.length === 0) return res.status(404).send('Assignment not found');
 
