@@ -93,12 +93,12 @@ CREATE TABLE IF NOT EXISTS `RacesHorses` (
   CONSTRAINT `fk_races_intersect_horses_horse_id`
     FOREIGN KEY (`horse_id`)
     REFERENCES `Horses` (`horse_id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_races_intersect_horses_race_id`
     FOREIGN KEY (`race_id`)
     REFERENCES `Races` (`race_id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -132,12 +132,12 @@ CREATE TABLE IF NOT EXISTS `HorsesSparks` (
   CONSTRAINT `fk_horses_intersect_sparks_horse_id`
     FOREIGN KEY (`horse_id`)
     REFERENCES `Horses` (`horse_id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_horses_intersect_sparks_spark_id`
     FOREIGN KEY (`spark_id`)
     REFERENCES `Sparks` (`spark_id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
