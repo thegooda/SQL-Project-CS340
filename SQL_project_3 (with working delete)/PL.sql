@@ -97,12 +97,12 @@ BEGIN
     CONSTRAINT `fk_races_intersect_horses_horse_id`
         FOREIGN KEY (`horse_id`)
         REFERENCES `Horses` (`horse_id`)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT `fk_races_intersect_horses_race_id`
         FOREIGN KEY (`race_id`)
         REFERENCES `Races` (`race_id`)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
         ON UPDATE CASCADE);
 
     -- -----------------------------------------------------
@@ -120,12 +120,12 @@ BEGIN
     CONSTRAINT `fk_horses_intersect_sparks_horse_id`
         FOREIGN KEY (`horse_id`)
         REFERENCES `Horses` (`horse_id`)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT `fk_horses_intersect_sparks_spark_id`
         FOREIGN KEY (`spark_id`)
         REFERENCES `Sparks` (`spark_id`)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
         ON UPDATE CASCADE);
 
     -- Inserts
@@ -333,5 +333,59 @@ BEGIN
         JOIN Horses h ON hs.horse_id = h.horse_id
         JOIN Sparks s ON hs.spark_id = s.spark_id
         WHERE hs.horse_spark_id = horse_spark_id_input;
+END //
+DELIMITER ;
+
+-- DELETE a Horse by ID
+DROP PROCEDURE IF EXISTS `DeleteHorseById`;
+DELIMITER //
+CREATE PROCEDURE DeleteHorseById(IN horse_id_input INT)
+BEGIN
+    DELETE FROM Horses WHERE horse_id = horse_id_input;
+END //
+DELIMITER ;
+
+-- DELETE a Race by ID
+DROP PROCEDURE IF EXISTS `DeleteRaceById`;
+DELIMITER //
+CREATE PROCEDURE DeleteRaceById(IN race_id_input INT)
+BEGIN
+    DELETE FROM Races WHERE race_id = race_id_input;
+END //
+DELIMITER ;
+
+-- DELETE a Support Card by ID
+DROP PROCEDURE IF EXISTS `DeleteSupportCardById`;
+DELIMITER //
+CREATE PROCEDURE DeleteSupportCardById(IN card_id_input INT)
+BEGIN
+    DELETE FROM Support_Cards WHERE card_id = card_id_input;
+END //
+DELIMITER ;
+
+-- DELETE a Spark by ID
+DROP PROCEDURE IF EXISTS `DeleteSparkById`;
+DELIMITER //
+CREATE PROCEDURE DeleteSparkById(IN spark_id_input INT)
+BEGIN
+    DELETE FROM Sparks WHERE spark_id = spark_id_input;
+END //
+DELIMITER ;
+
+-- DELETE a RacesHorses entry by ID
+DROP PROCEDURE IF EXISTS `DeleteRacesHorsesById`;
+DELIMITER //
+CREATE PROCEDURE DeleteRacesHorsesById(IN race_horse_id_input INT)
+BEGIN
+    DELETE FROM RacesHorses WHERE race_horse_id = race_horse_id_input;
+END //
+DELIMITER ;
+
+-- DELETE a HorsesSparks entry by ID
+DROP PROCEDURE IF EXISTS `DeleteHorsesSparksById`;
+DELIMITER //
+CREATE PROCEDURE DeleteHorsesSparksById(IN horse_spark_id_input INT)
+BEGIN
+    DELETE FROM HorsesSparks WHERE horse_spark_id = horse_spark_id_input;
 END //
 DELIMITER ;

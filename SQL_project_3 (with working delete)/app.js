@@ -63,7 +63,7 @@ app.get('/horses/add', async (req, res) => {
 // Edit horse form
 app.get('/horses/edit/:id', async (req, res) => {
   try {
-    const [results] = await db.query(`CALL GetHorseById(?)`, [req.params.id]);
+    const [results] = await db.query(`CALL GetHorseById(?);`, [req.params.id]);
     const horseRows = results[0];
     const [cards] = await db.query(`SELECT card_id, name FROM Support_Cards ORDER BY name;`);
     if (horseRows.length === 0) return res.status(404).send('Horse not found');
@@ -77,7 +77,7 @@ app.get('/horses/edit/:id', async (req, res) => {
 // Render delete horse confirmation page
 app.get('/horses/delete/:id', async (req, res) => {
   try {
-    const [results] = await db.query(`CALL GetHorseById(?)`, [req.params.id]);
+    const [results] = await db.query(`CALL GetHorseById(?);`, [req.params.id]);
     const rows = results[0];
 
     if (rows.length === 0) {
@@ -95,15 +95,8 @@ app.get('/horses/delete/:id', async (req, res) => {
 app.post('/horses/delete/:id', async (req, res) => {
   console.log('POST /horses/delete/:id hit with id:', req.params.id);
   try {
-    // Delete related records first
-    await db.query('DELETE FROM RacesHorses WHERE horse_id = ?', [req.params.id]);
-    await db.query('DELETE FROM HorsesSparks WHERE horse_id = ?', [req.params.id]);
-    
-    // Now delete the horse
-    const [result] = await db.query(
-      'DELETE FROM Horses WHERE horse_id = ?',
-      [req.params.id]
-    );
+    // Delete the horse
+    const [result] = await db.query(`CALL DeleteHorseById(?);`, [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).send('Horse not found or already deleted');
@@ -140,7 +133,7 @@ app.get('/races/add', (req, res) => {
 // Render edit race form
 app.get('/races/edit/:id', async (req, res) => {
   try {
-    const [results] = await db.query('CALL GetRaceById(?)', [req.params.id]);
+    const [results] = await db.query('CALL GetRaceById(?);', [req.params.id]);
     const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Race not found');
@@ -155,7 +148,7 @@ app.get('/races/edit/:id', async (req, res) => {
 // Render delete confirmation page
 app.get('/races/delete/:id', async (req, res) => {
   try {
-    const [results] = await db.query('CALL GetRaceById(?)', [req.params.id]);
+    const [results] = await db.query('CALL GetRaceById(?);', [req.params.id]);
     const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Race not found');
@@ -169,14 +162,8 @@ app.get('/races/delete/:id', async (req, res) => {
 
 app.post('/races/delete/:id', async (req, res) => {
   try {
-    // Delete related race entries first
-    await db.query('DELETE FROM RacesHorses WHERE race_id = ?', [req.params.id]);
-    
-    // Now delete the race
-    const [result] = await db.query(
-      'DELETE FROM Races WHERE race_id = ?',
-      [req.params.id]
-    );
+    // Delete the race
+    const [result] = await db.query(`CALL DeleteRaceById(?);`, [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).send('Race not found or already deleted');
@@ -211,7 +198,7 @@ app.get('/support-cards/add', (req, res) => {
 // Render edit support card form
 app.get('/support-cards/edit/:id', async (req, res) => {
   try {
-    const [results] = await db.query('CALL GetSupportCardById(?)', [req.params.id]);
+    const [results] = await db.query('CALL GetSupportCardById(?);', [req.params.id]);
     const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Support card not found');
@@ -226,7 +213,7 @@ app.get('/support-cards/edit/:id', async (req, res) => {
 // Render delete support card confirmation
 app.get('/support-cards/delete/:id', async (req, res) => {
   try {
-    const [results] = await db.query('CALL GetSupportCardById(?)', [req.params.id]);
+    const [results] = await db.query('CALL GetSupportCardById(?);', [req.params.id]);
     const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Support card not found');
@@ -240,14 +227,8 @@ app.get('/support-cards/delete/:id', async (req, res) => {
 
 app.post('/support-cards/delete/:id', async (req, res) => {
   try {
-    // Set card_id to NULL for horses that have this support card
-    await db.query('UPDATE Horses SET card_id = NULL WHERE card_id = ?', [req.params.id]);
-    
-    // Now delete the support card
-    const [result] = await db.query(
-      'DELETE FROM Support_Cards WHERE card_id = ?',
-      [req.params.id]
-    );
+    // Delete the support card
+    const [result] = await db.query(`CALL DeleteSupportCardById(?);`, [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).send('Support card not found or already deleted');
@@ -282,7 +263,7 @@ app.get('/sparks/add', (req, res) => {
 // Render edit spark form
 app.get('/sparks/edit/:id', async (req, res) => {
   try {
-    const [results] = await db.query(`CALL GetSparkById(?)`, [req.params.id]);
+    const [results] = await db.query(`CALL GetSparkById(?);`, [req.params.id]);
     const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Spark not found');
@@ -297,7 +278,7 @@ app.get('/sparks/edit/:id', async (req, res) => {
 // Render delete spark confirmation
 app.get('/sparks/delete/:id', async (req, res) => {
   try {
-    const [results] = await db.query(`CALL GetSparkById(?)`, [req.params.id]);
+    const [results] = await db.query(`CALL GetSparkById(?);`, [req.params.id]);
     const rows = results[0];
     if (rows.length === 0) {
       return res.status(404).send('Spark not found');
@@ -311,14 +292,8 @@ app.get('/sparks/delete/:id', async (req, res) => {
 
 app.post('/sparks/delete/:id', async (req, res) => {
   try {
-    // Delete related horse-spark assignments first
-    await db.query('DELETE FROM HorsesSparks WHERE spark_id = ?', [req.params.id]);
-    
-    // Now delete the spark
-    const [result] = await db.query(
-      'DELETE FROM Sparks WHERE spark_id = ?',
-      [req.params.id]
-    );
+    // Delete the spark
+    const [result] = await db.query(`CALL DeleteSparkById(?);`, [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).send('Spark not found or already deleted');
@@ -362,7 +337,7 @@ app.get('/races-horses/add', async (req, res) => {
 app.get('/races-horses/edit/:id', async (req, res) => {
   try {
     // 1. Get the race entry
-    const [results] = await db.query(`CALL GetRacesHorsesById(?)`, [req.params.id]);
+    const [results] = await db.query(`CALL GetRacesHorsesById(?);`, [req.params.id]);
     const rows = results[0];
 
     if (rows.length === 0) {
@@ -405,7 +380,7 @@ app.get('/races-horses/edit/:id', async (req, res) => {
 // Render delete confirmation for a specific race entry
 app.get('/races-horses/delete/:id', async (req, res) => {
   try {
-    const [results] = await db.query(`CALL GetRacesHorsesDetailsById(?)`, [req.params.id]);
+    const [results] = await db.query(`CALL GetRacesHorsesDetailsById(?);`, [req.params.id]);
     const rows = results[0];
 
     if (rows.length === 0) return res.status(404).send('Race entry not found');
@@ -420,10 +395,7 @@ app.get('/races-horses/delete/:id', async (req, res) => {
 
 app.post('/races-horses/delete/:id', async (req, res) => {
   try {
-    const [result] = await db.query(
-      'DELETE FROM RacesHorses WHERE race_horse_id = ?',
-      [req.params.id]
-    );
+    const [result] = await db.query(`CALL DeleteRacesHorsesById(?);`, [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).send('Race entry not found or already deleted');
@@ -467,7 +439,7 @@ app.get('/horses-sparks/add', async (req, res) => {
 // Edit a horse-spark assignment
 app.get('/horses-sparks/edit/:id', async (req, res) => {
   try {
-    const [results] = await db.query('CALL GetRacesHorsesById(?)', [req.params.id]);
+    const [results] = await db.query('CALL GetRacesHorsesById(?);', [req.params.id]);
     const assignmentRows = results[0];
 
     if (assignmentRows.length === 0) return res.status(404).send('Assignment not found');
@@ -501,7 +473,7 @@ app.get('/horses-sparks/edit/:id', async (req, res) => {
 // Delete a horse-spark assignment
 app.get('/horses-sparks/delete/:id', async (req, res) => {
     try {
-        const [results] = await db.query(`CALL GetHorsesSparksDetailsById(?)`,[req.params.id]);
+        const [results] = await db.query(`CALL GetHorsesSparksDetailsById(?);`,[req.params.id]);
         const assignmentRows = results[0];
 
         if (assignmentRows.length === 0) return res.status(404).send('Assignment not found');
@@ -516,10 +488,7 @@ app.get('/horses-sparks/delete/:id', async (req, res) => {
 
 app.post('/horses-sparks/delete/:id', async (req, res) => {
   try {
-    const [result] = await db.query(
-      'DELETE FROM HorsesSparks WHERE horse_spark_id = ?',
-      [req.params.id]
-    );
+    const [result] = await db.query(`CALL DeleteHorsesSparksById(?);`, [req.params.id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).send('Horse-spark assignment not found or already deleted');
