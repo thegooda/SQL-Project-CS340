@@ -61,7 +61,6 @@ app.get('/horses/add', async (req, res) => {
 
 // Add horse with user supplied data
 app.post('/horses/add', async (req, res) => {
-
   // Account for null support card
   const card_id = req.body.card_id === "" ? null : req.body.card_id;
 
@@ -148,6 +147,18 @@ app.get('/races/add', (req, res) => {
   res.render('races_add', { title: 'Add New Race' });
 });
 
+// Add race with user supplied data
+app.post('/races/add', async (req, res) => {
+  try {
+    await db.query(`CALL InsertRace(?, ?, ?);`, [req.body.race_name, req.body.surface_type, req.body.distance]);
+
+    res.redirect('/races');
+  }
+  catch (err) {
+    console.error('Error adding horse:', err);
+    res.status(500).send('Database error while adding race');
+  }
+});
 // Render edit race form
 app.get('/races/edit/:id', async (req, res) => {
   try {

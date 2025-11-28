@@ -429,6 +429,19 @@ BEGIN
 END //
 DELIMITER ;
 
+-- INSERT into Races
+DROP PROCEDURE IF EXISTS `InsertRace`;
+DELIMITER //
+CREATE PROCEDURE InsertRace(
+                    IN race_name_input VARCHAR(65),
+                    IN surface_type_input VARCHAR(15),
+                    IN distance_input VARCHAR(15))
+BEGIN
+    INSERT INTO Races (name, surface_type, distance)
+        VALUES (race_name_input, surface_type_input, distance_input);
+END //
+DELIMITER ;
+
 -- INSERT into Support_Cards
 DROP PROCEDURE IF EXISTS `InsertSupportCard`;
 DELIMITER //
