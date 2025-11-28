@@ -159,6 +159,7 @@ app.post('/races/add', async (req, res) => {
     res.status(500).send('Database error while adding race');
   }
 });
+
 // Render edit race form
 app.get('/races/edit/:id', async (req, res) => {
   try {
@@ -302,6 +303,19 @@ app.get('/sparks', async (req, res) => {
 // Render add spark form
 app.get('/sparks/add', (req, res) => {
   res.render('sparks_add', { title: 'Add New Spark' });
+});
+
+// Add spark with user supplied data
+app.post('/sparks/add', async (req, res) => {
+  try {
+    await db.query(`CALL InsertSpark(?, ?, ?);`, [req.body.spark_name, req.body.stat_boosted, req.body.star_amount]);
+
+    res.redirect('/sparks');
+  }
+  catch (err) {
+    console.error('Error adding horse:', err);
+    res.status(500).send('Database error while adding spark');
+  }
 });
 
 // Render edit spark form

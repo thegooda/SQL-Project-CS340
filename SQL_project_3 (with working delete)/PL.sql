@@ -454,3 +454,16 @@ BEGIN
         VALUES (name_input, stat_boosted_input, boost_amount_input);
 END //
 DELIMITER ;
+
+-- INSERT Into Sparks
+DROP PROCEDURE IF EXISTS `InsertSpark`;
+DELIMITER //
+CREATE PROCEDURE InsertSpark(
+                    IN spark_name_input VARCHAR(65),
+                    IN stat_boosted_input VARCHAR(15),
+                    IN star_amount_input INT)
+BEGIN
+    INSERT INTO Sparks (name, stat_boosted, star_amount)
+        VALUES (spark_name_input, stat_boosted_input, star_amount_input);
+END //
+DELIMITER ;
