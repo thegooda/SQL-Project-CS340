@@ -7,6 +7,10 @@
 -- USE `cs340_[insert your id here]` ;
 USE `cs340_haneyth` ;
 
+-- =============================================
+-- RESET Section
+-- =============================================
+
 DROP PROCEDURE IF EXISTS `ResetTables`;
 DELIMITER //
 CREATE PROCEDURE ResetTables()
@@ -170,6 +174,10 @@ BEGIN
     (5, 1, 1);
 END //
 DELIMITER ;
+
+-- =============================================
+-- SELECT Section
+-- =============================================
 
 -- Populate the Horses table
 DROP PROCEDURE IF EXISTS `PopulateHorses`;
@@ -336,6 +344,10 @@ BEGIN
 END //
 DELIMITER ;
 
+-- =============================================
+-- DELETE Section
+-- =============================================
+
 -- DELETE a Horse by ID
 DROP PROCEDURE IF EXISTS `DeleteHorseById`;
 DELIMITER //
@@ -387,5 +399,45 @@ DELIMITER //
 CREATE PROCEDURE DeleteHorsesSparksById(IN horse_spark_id_input INT)
 BEGIN
     DELETE FROM HorsesSparks WHERE horse_spark_id = horse_spark_id_input;
+END //
+DELIMITER ;
+
+-- =============================================
+-- INSERT Section
+-- =============================================
+
+-- INSERT into Horses
+DROP PROCEDURE IF EXISTS `InsertHorse`;
+DELIMITER //
+CREATE PROCEDURE InsertHorse(
+                    IN horse_name_input VARCHAR(65),
+                    IN base_speed_input INT,
+                    IN base_stamina_input INT,
+                    IN base_gut_input INT,
+                    IN base_strength_input INT,
+                    IN base_wit_input INT,
+                    IN style_input VARCHAR(25),
+                    IN preferred_race_distance_input VARCHAR(15),
+                    IN preferred_race_surface_input VARCHAR(15),
+                    IN card_id_input INT)
+BEGIN
+    INSERT INTO Horses (name, base_speed, base_stamina, base_gut, base_strength, 
+                    base_wit, style, preferred_race_distance, preferred_race_surface, card_id)
+        VALUES (horse_name_input, base_speed_input, base_stamina_input, base_gut_input,
+                base_strength_input, base_wit_input, style_input, preferred_race_distance_input,
+                preferred_race_surface_input, card_id_input);
+END //
+DELIMITER ;
+
+-- INSERT into Support_Cards
+DROP PROCEDURE IF EXISTS `InsertSupportCard`;
+DELIMITER //
+CREATE PROCEDURE InsertSupportCard(
+                    IN name_input VARCHAR(65),
+                    IN stat_boosted_input VARCHAR(15),
+                    IN boost_amount_input INT)
+BEGIN
+    INSERT INTO Support_Cards (name, stat_boosted, boost_amount)
+        VALUES (name_input, stat_boosted_input, boost_amount_input);
 END //
 DELIMITER ;

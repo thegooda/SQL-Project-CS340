@@ -48,7 +48,6 @@ app.get('/horses', async (req, res) => {
     }
 });
 
-
 // Add horse form
 app.get('/horses/add', async (req, res) => {
   try {
@@ -57,6 +56,25 @@ app.get('/horses/add', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Database error');
+  }
+});
+
+// Add horse with user supplied data
+app.post('/horses/add', async (req, res) => {
+
+  // Account for null support card
+  const card_id = req.body.card_id === "" ? null : req.body.card_id;
+
+  try {
+    await db.query(`CALL InsertHorse(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      [req.body.horse_name, req.body.base_speed, req.body.base_stamina, req.body.base_gut,
+      req.body.base_strength, req.body.base_wit, req.body.style, req.body.preferred_race_distance,
+      req.body.preferred_race_surface, card_id]);
+    
+    res.redirect('/horses');
+  } catch (err) {
+    console.error('Error adding horse:', err);
+    res.status(500).send('Database error while adding horse');
   }
 });
 
@@ -91,7 +109,7 @@ app.get('/horses/delete/:id', async (req, res) => {
   }
 });
 
-// POST route - actually delete
+// Post after user confirms the delete
 app.post('/horses/delete/:id', async (req, res) => {
   console.log('POST /horses/delete/:id hit with id:', req.params.id);
   try {
@@ -160,6 +178,7 @@ app.get('/races/delete/:id', async (req, res) => {
   }
 });
 
+// Post after user confirms the delete
 app.post('/races/delete/:id', async (req, res) => {
   try {
     // Delete the race
@@ -195,6 +214,19 @@ app.get('/support-cards/add', (req, res) => {
   res.render('support_cards_add', { title: 'Add New Support Card' });
 });
 
+// Add support card with user supplied data
+app.post('/support-cards/add', async (req, res) => {
+  try {
+    await db.query(`CALL InsertSupportCard(?, ?, ?);`,
+      [req.body.name, req.body.stat_boosted, req.body.boost_amount]);
+    
+    res.redirect('/support-cards');
+  } catch (err) {
+    console.error('Error adding support card:', err);
+    res.status(500).send('Database error while adding support card');
+  }
+});
+
 // Render edit support card form
 app.get('/support-cards/edit/:id', async (req, res) => {
   try {
@@ -225,6 +257,7 @@ app.get('/support-cards/delete/:id', async (req, res) => {
   }
 });
 
+// Post after user confirms the delete
 app.post('/support-cards/delete/:id', async (req, res) => {
   try {
     // Delete the support card
@@ -290,6 +323,7 @@ app.get('/sparks/delete/:id', async (req, res) => {
   }
 });
 
+// Post after user confirms the delete
 app.post('/sparks/delete/:id', async (req, res) => {
   try {
     // Delete the spark
@@ -393,6 +427,7 @@ app.get('/races-horses/delete/:id', async (req, res) => {
   }
 });
 
+// Post after user confirms the delete
 app.post('/races-horses/delete/:id', async (req, res) => {
   try {
     const [result] = await db.query(`CALL DeleteRacesHorsesById(?);`, [req.params.id]);
@@ -407,8 +442,6 @@ app.post('/races-horses/delete/:id', async (req, res) => {
     res.status(500).send('Database error while deleting race entry: ' + err.message);
   }
 });
-
-
 
 // ==================== HORSESSPARKS (M:N) ROUTES ====================
 
@@ -486,6 +519,7 @@ app.get('/horses-sparks/delete/:id', async (req, res) => {
     }
 });
 
+// Post after user confirms the delete
 app.post('/horses-sparks/delete/:id', async (req, res) => {
   try {
     const [result] = await db.query(`CALL DeleteHorsesSparksById(?);`, [req.params.id]);

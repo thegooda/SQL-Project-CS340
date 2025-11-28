@@ -1,34 +1,34 @@
 <h2>Add New Horse</h2 class="highlight-text">
 
-<form action="/horse/add" method="POST">
+<form action="/horses/add" method="POST">
     <label for="name">Horse Name:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="horse_name" name="horse_name" required><br><br>
 
     <label for="Base Speed">Base Speed:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="base_speed" name="base_speed" required><br><br>
 
     <label for="Base Stamina">Base Stamina:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="base_stamina" name="base_stamina" required><br><br>
 
     <label for="Base Gut">Base Gut:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="base_gut" name="base_gut" required><br><br>
 
     <label for="Base Strength">Base Strength:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="base_strength" name="base_strength" required><br><br>
 
     <label for="Base Wit">Base Wit:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="base_wit" name="base_wit" required><br><br>
 
     <label for="Style">Style:</label><br>
-    <select id="surface" name="surface" required>
-        <option value="Front">Front</option>
-        <option value="Pace">Pace</option>
-        <option value="Late">Late</option>
-        <option value="End">End</option>
+    <select id="style" name="style" required>
+        <option value="Front runner">Front runner</option>
+        <option value="Pace chaser">Pace chaser</option>
+        <option value="Late surger">Late surger</option>
+        <option value="End closer">End closer</option>
     </select><br><br>
 
     <label for="Preferred Distance">Preferred Distance:</label><br>
-    <select id="distance" name="distance" required>
+    <select id="preferred_race_distance" name="preferred_race_distance" required>
         <option value="Short">Short</option>
         <option value="Medium">Medium</option>
         <option value="Mile">Mile</option>
@@ -36,13 +36,19 @@
     </select><br><br>
 
     <label for="surface">Surface:</label><br>
-    <select id="surface" name="surface" required>
+    <select id="preferred_race_surface" name="preferred_race_surface" required>
         <option value="Turf">Turf</option>
         <option value="Dirt">Dirt</option>
     </select><br><br>
 
     <label for="Support Card">Support Card:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <select id="card_id" name="card_id">
+        <option value="" selected>No Support Card</option>
+        {{#each cards}}
+            <option value="{{this.card_id}}">{{this.name}}</option>
+        {{/each}}
+    </select>
+    <br><br>
 
     <button type="submit" class="btn">Add Horse</button>
     <a href="/horses" class="btn btn-cancel">Cancel</a>
