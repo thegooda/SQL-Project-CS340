@@ -6,11 +6,11 @@
 
   <label for="stat_boosted">Stat Boosted:</label><br>
   <select id="stat_boosted" name="stat_boosted" required>
-    <option value="Speed" {{card.speedSelected}}>Speed</option>
-    <option value="Stamina" {{card.staminaSelected}}>Stamina</option>
-    <option value="Power" {{card.powerSelected}}>Power</option>
-    <option value="Guts" {{card.gutsSelected}}>Guts</option>
-    <option value="Wisdom" {{card.wisdomSelected}}>Wisdom</option>
+    <option value="Speed" {{#if card.boost_speed}}selected{{/if}}>Speed</option>
+    <option value="Stamina" {{#if card.boost_stamina}}selected{{/if}}>Stamina</option>
+    <option value="Strength" {{#if card.boost_strength}}selected{{/if}}>Strength</option>
+    <option value="Gut" {{#if card.boost_gut}}selected{{/if}}>Gut</option>
+    <option value="Wit" {{#if card.boost_wit}}selected{{/if}}>Wit</option>
   </select><br><br>
 
   <label for="boost_amount">Boost Amount:</label><br>

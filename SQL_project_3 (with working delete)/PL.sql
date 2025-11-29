@@ -136,7 +136,7 @@ BEGIN
     INSERT INTO `Support_Cards` VALUES
     (1, 'Beyond This Shining Moment', 'Speed', 47),
     (2, 'Breakaway Battleship', 'Stamina', 52),
-    (3, 'Wild Rider', 'Power', 49),
+    (3, 'Wild Rider', 'Strength', 49),
     (4, 'The Brightest Star in Japan!', 'Gut', 55),
     (5, 'Wave of Gratitude', 'Wit', 46);
 
@@ -527,6 +527,23 @@ BEGIN
 END //
 DELIMITER ;
 
+-- UPDATE a Race by ID
+DROP PROCEDURE IF EXISTS `UpdateRaceById`;
+DELIMITER //
+CREATE PROCEDURE UpdateRaceById(
+                    IN race_id_input INT,
+                    IN race_name_input VARCHAR(65),
+                    IN surface_type_input VARCHAR(15),
+                    IN distance_input VARCHAR(15))
+BEGIN
+    UPDATE Races
+        SET name = race_name_input,
+            surface_type = surface_type_input,
+            distance = distance_input
+        WHERE race_id = race_id_input;
+END //
+DELIMITER ;
+
 -- UPDATE a Support Card by ID
 DROP PROCEDURE IF EXISTS `UpdateSupportCardById`;
 DELIMITER //
@@ -544,3 +561,51 @@ BEGIN
 END //
 DELIMITER ;
 
+-- UPDATE a Spark by ID
+DROP PROCEDURE IF EXISTS `UpdateSparkById`;
+DELIMITER //
+CREATE PROCEDURE UpdateSparkById(
+                    IN spark_id_input INT,
+                    IN spark_name_input VARCHAR(65),
+                    IN stat_boosted_input VARCHAR(15),
+                    IN star_amount_input INT)
+BEGIN
+    UPDATE Sparks
+        SET name = spark_name_input,
+            stat_boosted = stat_boosted_input,
+            star_amount = star_amount_input
+        WHERE spark_id = spark_id_input;
+END //
+DELIMITER ;
+
+-- UPDATE a RacesHorses entry by ID
+DROP PROCEDURE IF EXISTS `UpdateRacesHorsesById`;
+DELIMITER //
+CREATE PROCEDURE UpdateRacesHorsesById(
+                    IN race_horse_id_input INT,
+                    IN horse_id_input INT,
+                    IN race_id_input INT)
+BEGIN
+    UPDATE RacesHorses
+        SET horse_id = horse_id_input,
+            race_id = race_id_input
+        WHERE
+            race_horse_id = race_horse_id_input;
+END //
+DELIMITER ;
+
+-- UPDATE a HorsesSparks entry by ID
+DROP PROCEDURE IF EXISTS `UpdateHorsesSparksById`;
+DELIMITER //
+CREATE PROCEDURE UpdateHorsesSparksById(
+                    IN horse_spark_id_input INT,
+                    IN horse_id_input INT,
+                    IN spark_id_input INT)
+BEGIN
+    UPDATE HorsesSparks
+        SET horse_id = horse_id_input,
+            spark_id = spark_id_input
+        WHERE
+            horse_spark_id = horse_spark_id_input;
+END //
+DELIMITER ;

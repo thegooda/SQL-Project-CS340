@@ -1,26 +1,26 @@
 <h2>Edit Race</h2>
 
-<form action="/races/edit/{{race.id}}" method="POST" class="form-container">
+<form action="/races/edit/{{race.race_id}}" method="POST" class="form-container">
     <div class="form-group">
         <label for="name">Race Name:</label><br>
-        <input type="text" id="name" name="name" value="{{race.name}}" required>
+        <input type="text" id="race_name" name="race_name" value="{{race.name}}" required>
     </div>
 
     <div class="form-group">
         <label for="surface">Surface:</label><br>
-        <select id="surface" name="surface" required>
-            <option value="Turf" {{race.surfaceTurfSelected}}>Turf</option>
-            <option value="Dirt" {{race.surfaceDirtSelected}}>Dirt</option>
+        <select id="surface_type" name="surface_type" required>
+            <option value="Turf" {{#if race.surface_turf}}selected{{/if}}>Turf</option>
+            <option value="Dirt" {{#if race.surface_dirt}}selected{{/if}}>Dirt</option>
         </select>
     </div>
 
     <div class="form-group">
         <label for="distance">Distance:</label><br>
         <select id="distance" name="distance" required>
-            <option value="Short" {{race.distanceShortSelected}}>Short</option>
-            <option value="Medium" {{race.distanceMediumSelected}}>Medium</option>
-            <option value="Mile" {{race.distanceMileSelected}}>Mile</option>
-            <option value="Long" {{race.distanceLongSelected}}>Long</option>
+            <option value="Short" {{#if race.distance_short}}selected{{/if}}>Short</option>
+            <option value="Medium" {{#if race.distance_medium}}selected{{/if}}>Medium</option>
+            <option value="Mile" {{#if race.distance_mile}}selected{{/if}}>Mile</option>
+            <option value="Long" {{#if race.distance_long}}selected{{/if}}>Long</option>
         </select>
     </div>
 

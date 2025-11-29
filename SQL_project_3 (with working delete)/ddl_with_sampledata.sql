@@ -151,7 +151,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 INSERT INTO `Support_Cards` VALUES
   (1, 'Beyond This Shining Moment', 'Speed', 47),
   (2, 'Breakaway Battleship', 'Stamina', 52),
-  (3, 'Wild Rider', 'Power', 49),
+  (3, 'Wild Rider', 'Strength', 49),
   (4, 'The Brightest Star in Japan!', 'Gut', 55),
   (5, 'Wave of Gratitude', 'Wit', 46);
 

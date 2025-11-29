@@ -87,6 +87,7 @@ app.get('/horses/edit/:id', async (req, res) => {
     if (horseRows.length === 0) return res.status(404).send('Horse not found');
 
     // Identify which style, preferred distance, and surface the horse has
+    // For use in displaying previously selected values on Edit page
     switch (horseRows[0].style) {
       case 'Front runner':
         horseRows[0].style_front_runner = true;
@@ -237,10 +238,50 @@ app.get('/races/edit/:id', async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).send('Race not found');
     }
+
+    // Determine which surface type and distance the race is set with
+    // So that value is displayed by default on the edit page
+    switch (rows[0].surface_type) {
+      case 'Dirt':
+        rows[0].surface_dirt = true;
+        break;
+      case 'Turf':
+        rows[0].surface_turf = true;
+        break;
+    }
+
+    switch (rows[0].distance) {
+      case 'Short':
+        rows[0].distance_short = true;
+        break;
+      case 'Medium':
+        rows[0].distance_medium = true;
+        break;
+      case 'Mile':
+        rows[0].distance_mile = true;
+        break;
+      case 'Long':
+        rows[0].distance_long = true;
+        break;
+    }
+
     res.render('races_edit', { title: 'Edit Race', race: rows[0] });
   } catch (err) {
     console.error('Error loading race for edit:', err);
     res.status(500).send('Database error while loading race for edit.');
+  }
+});
+
+// Post edits to race
+app.post('/races/edit/:id', async (req, res) => {
+  try {
+    await db.query(`CALL UpdateRaceById(?, ?, ?, ?);`,
+      [req.params.id, req.body.race_name, req.body.surface_type, req.body.distance]);
+      
+    res.redirect('/races');
+  } catch (err) {
+    console.error('Error updating race:', err);
+    res.status(500).send('Database error while updating race');
   }
 });
 
@@ -313,9 +354,29 @@ app.get('/support-cards/edit/:id', async (req, res) => {
   try {
     const [results] = await db.query('CALL GetSupportCardById(?);', [req.params.id]);
     const rows = results[0];
+
     if (rows.length === 0) {
       return res.status(404).send('Support card not found');
     }
+
+    switch (rows[0].stat_boosted) {
+      case 'Speed':
+        rows[0].boost_speed = true;
+        break;
+      case 'Stamina':
+        rows[0].boost_stamina = true;
+        break;
+      case 'Strength':
+        rows[0].boost_strength = true;
+        break;
+      case 'Gut':
+        rows[0].boost_gut = true;
+        break;
+      case 'Wit':
+        rows[0].boost_wit = true;
+        break;
+    }
+
     res.render('support_cards_edit', { title: 'Edit Support Card', card: rows[0] });
   } catch (err) {
     console.error('Error loading support card for edit:', err);
@@ -408,10 +469,42 @@ app.get('/sparks/edit/:id', async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).send('Spark not found');
     }
+
+    switch (rows[0].stat_boosted) {
+      case 'Speed':
+        rows[0].boost_speed = true;
+        break;
+      case 'Stamina':
+        rows[0].boost_stamina = true;
+        break;
+      case 'Strength':
+        rows[0].boost_strength = true;
+        break;
+      case 'Wit':
+        rows[0].boost_wit = true;
+        break;
+      case 'Gut':
+        rows[0].boost_gut = true;
+        break;
+    }
+
     res.render('sparks_edit', { title: 'Edit Spark', spark: rows[0] });
   } catch (err) {
     console.error('Error loading spark for edit:', err);
     res.status(500).send('Database error while loading spark for edit.');
+  }
+});
+
+// Post edits to spark
+app.post('/sparks/edit/:id', async (req, res) => {
+  try {
+    await db.query(`CALL UpdateSparkById(?, ?, ?, ?);`,
+      [req.params.id, req.body.spark_name, req.body.stat_boosted, req.body.star_amount]);
+
+    res.redirect('/sparks');
+  } catch (err) {
+    console.error('Error updating spark:', err);
+    res.status(500).send('Database error while updating spark');
   }
 });
 
