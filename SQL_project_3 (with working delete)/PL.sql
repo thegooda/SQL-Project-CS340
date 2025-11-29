@@ -491,3 +491,56 @@ BEGIN
         VALUES (horse_id_input, spark_id_input);
 END //
 DELIMITER ;
+
+-- =============================================
+-- UPDATE Section
+-- =============================================
+
+-- UPDATE a Horse by ID
+DROP PROCEDURE IF EXISTS `UpdateHorseById`;
+DELIMITER //
+CREATE PROCEDURE UpdateHorseById(
+                    IN horse_id_input INT,
+                    IN horse_name_input VARCHAR(65),
+                    IN base_speed_input INT,
+                    IN base_stamina_input INT,
+                    IN base_gut_input INT,
+                    IN base_strength_input INT,
+                    IN base_wit_input INT,
+                    IN style_input VARCHAR(25),
+                    IN preferred_race_distance_input VARCHAR(15),
+                    IN preferred_race_surface_input VARCHAR(15),
+                    IN card_id_input INT)
+BEGIN
+    UPDATE Horses
+        SET name = horse_name_input,
+            base_speed = base_speed_input,
+            base_stamina = base_stamina_input,
+            base_gut = base_gut_input,
+            base_strength = base_strength_input,
+            base_wit = base_wit_input,
+            style = style_input,
+            preferred_race_distance = preferred_race_distance_input,
+            preferred_race_surface = preferred_race_surface_input,
+            card_id = card_id_input
+        WHERE horse_id = horse_id_input;
+END //
+DELIMITER ;
+
+-- UPDATE a Support Card by ID
+DROP PROCEDURE IF EXISTS `UpdateSupportCardById`;
+DELIMITER //
+CREATE PROCEDURE UpdateSupportCardById(
+                    IN card_id_input INT,
+                    IN name_input VARCHAR(65),
+                    IN stat_boosted_input VARCHAR(15),
+                    IN boost_amount_input INT)
+BEGIN
+    UPDATE Support_Cards
+        SET name = name_input,
+            stat_boosted = stat_boosted_input,
+            boost_amount = boost_amount_input
+        WHERE card_id = card_id_input;
+END //
+DELIMITER ;
+

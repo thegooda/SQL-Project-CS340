@@ -2,7 +2,7 @@
 
 <form action="/horses/edit/{{horse.horse_id}}" method="POST">
     <label for="name">Horse Name:</label><br>
-    <input type="text" id="name" name="name" value="{{horse.name}}" required><br><br>
+    <input type="text" id="horse_name" name="horse_name" value="{{horse.name}}" required><br><br>
 
     <label for="base_speed">Base Speed:</label><br>
     <input type="text" id="base_speed" name="base_speed" value="{{horse.base_speed}}" required><br><br>
@@ -19,25 +19,43 @@
     <label for="base_wit">Base Wit:</label><br>
     <input type="text" id="base_wit" name="base_wit" value="{{horse.base_wit}}" required><br><br>
 
-    <label for="style">Style:</label><br>
-    <input type="text" id="style" name="style" value="{{horse.style}}" required><br><br>
+    <label for="Style">Style:</label><br>
+    <select id="style" name="style" required>
+        <option value="Front runner" {{#if horse.style_front_runner}}selected{{/if}}>Front runner</option>
+        <option value="Pace chaser" {{#if horse.style_pace_chaser}}selected{{/if}}>Pace chaser</option>
+        <option value="Late surger" {{#if horse.style_late_surger}}selected{{/if}}>Late surger</option>
+        <option value="End closer" {{#if horse.style_end_closer}}selected{{/if}}>End closer</option>
+    </select><br><br>
 
-    <label for="preferred_race_distance">Preferred Distance:</label><br>
+    <label for="Preferred Distance">Preferred Distance:</label><br>
     <select id="preferred_race_distance" name="preferred_race_distance" required>
-        <option value="Short" {{horse.distanceShortSelected}}>Short</option>
-        <option value="Medium" {{horse.distanceMediumSelected}}>Medium</option>
-        <option value="Mile" {{horse.distanceMileSelected}}>Mile</option>
-        <option value="Long" {{horse.distanceLongSelected}}>Long</option>
+        <option value="Short" {{#if horse.distance_short}}selected{{/if}}>Short</option>
+        <option value="Medium" {{#if horse.distance_medium}}selected{{/if}}>Medium</option>
+        <option value="Mile" {{#if horse.distance_mile}}selected{{/if}}>Mile</option>
+        <option value="Long" {{#if horse.distance_long}}selected{{/if}}>Long</option>
     </select><br><br>
 
-    <label for="preferred_race_surface">Preferred Surface:</label><br>
+    <label for="surface">Surface:</label><br>
     <select id="preferred_race_surface" name="preferred_race_surface" required>
-        <option value="Turf" {{horse.surfaceTurfSelected}}>Turf</option>
-        <option value="Dirt" {{horse.surfaceDirtSelected}}>Dirt</option>
+        <option value="Turf" {{#if horse.surface_turf}}selected{{/if}}>Turf</option>
+        <option value="Dirt" {{#if horse.surface_dirt}}selected{{/if}}>Dirt</option>
     </select><br><br>
 
-    <label for="card_id">Support Card ID:</label><br>
-    <input type="text" id="card_id" name="card_id" value="{{horse.card_id}}"><br><br>
+    <label for="card_id">Support Card</label><br>
+    <select id="card_id" name="card_id">
+
+        <!-- No Support Card option -->
+        <option value="" {{#if nullCard}}selected{{/if}}>
+            No Support Card
+        </option>
+
+        {{#each cards}}
+            <option value="{{this.card_id}}" {{this.selected}}>
+                {{this.name}}
+            </option>
+        {{/each}}   
+    </select>
+    <br><br>
 
     <button type="submit" class="btn">Save Changes</button>
     <a href="/horses" class="btn btn-cancel">Cancel</a>

@@ -83,11 +83,80 @@ app.get('/horses/edit/:id', async (req, res) => {
     const [results] = await db.query(`CALL GetHorseById(?);`, [req.params.id]);
     const horseRows = results[0];
     const [cards] = await db.query(`SELECT card_id, name FROM Support_Cards ORDER BY name;`);
+
     if (horseRows.length === 0) return res.status(404).send('Horse not found');
-    res.render('horses_edit', { title: 'Edit Horse', horse: horseRows[0], cards });
+
+    // Identify which style, preferred distance, and surface the horse has
+    switch (horseRows[0].style) {
+      case 'Front runner':
+        horseRows[0].style_front_runner = true;
+        break;
+      case 'Pace chaser':
+        horseRows[0].style_pace_chaser = true;
+        break;
+      case 'Late surger':
+        horseRows[0].style_late_surger = true;
+        break;
+      case 'End closer':
+        horseRows[0].style_end_closer = true;
+        break;
+    }
+
+    switch (horseRows[0].preferred_race_distance) {
+      case 'Short':
+        horseRows[0].distance_short = true;
+        break;
+      case 'Medium':
+        horseRows[0].distance_medium = true;
+        break;
+      case 'Mile':
+        horseRows[0].distance_mile = true;
+        break;
+      case 'Long':
+        horseRows[0].distance_long = true;
+        break;
+    }
+
+    switch (horseRows[0].preferred_race_surface) {
+      case 'Dirt':
+        horseRows[0].surface_dirt = true;
+        break;
+      case 'Turf':
+        horseRows[0].surface_turf = true;
+        break;
+    }
+    
+    // Identify the card which should be selected in the dropdown initially
+    var nullCard = true;
+    cards.forEach(card => {
+      if (horseRows[0].card_id === card.card_id) {
+        card.selected = 'selected';
+        nullCard = false;
+      }
+    });
+
+    res.render('horses_edit', { title: 'Edit Horse', horse: horseRows[0], cards, nullCard});
   } catch (err) {
     console.error(err);
     res.status(500).send('Database error');
+  }
+});
+
+// Post edits to horse
+app.post('/horses/edit/:id', async (req, res) => {
+  // Account for null support card
+  const card_id = req.body.card_id === "" ? null : req.body.card_id;
+
+  try {
+    await db.query(`CALL UpdateHorseById(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      [req.params.id, req.body.horse_name, req.body.base_speed, req.body.base_stamina, req.body.base_gut,
+      req.body.base_strength, req.body.base_wit, req.body.style, req.body.preferred_race_distance,
+      req.body.preferred_race_surface, card_id]);
+
+    res.redirect('/horses');
+  } catch (err) {
+    console.error('Error updating horse:', err);
+    res.status(500).send('Database error while updating horse');
   }
 });
 
@@ -251,6 +320,19 @@ app.get('/support-cards/edit/:id', async (req, res) => {
   } catch (err) {
     console.error('Error loading support card for edit:', err);
     res.status(500).send('Database error while loading support card for edit.');
+  }
+});
+
+// Post edits to support card
+app.post('/support-cards/edit/:id', async (req, res) => {
+  try {
+    await db.query(`CALL UpdateSupportCardById(?, ?, ?, ?);`,
+      [req.params.id, req.body.name, req.body.stat_boosted, req.body.boost_amount]);
+
+    res.redirect('/support-cards');
+  } catch (err) {
+    console.error('Error updating support card:', err);
+    res.status(500).send('Database error while updating support card');
   }
 });
 
