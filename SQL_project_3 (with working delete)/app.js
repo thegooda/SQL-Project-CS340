@@ -616,18 +616,32 @@ app.get('/races-horses/edit/:id', async (req, res) => {
     });
 
     // 4. Render the edit page
-    res.render('races-horses_edit', {
-      title: 'Edit Race Entry',
-      entry,
-      horses,
-      races,
-    });
+    res.render('races-horses_edit', {title: 'Edit Race Entry', entry, horses, races, });
+
   } catch (err) {
     console.error('Error loading race entry for edit:', err);
     res.status(500).send('Database error while loading race entry for edit.');
   }
 });
 
+// Post edits to horse race intersection
+app.post('/races-horses/edit/:id', async (req, res) => {
+  try {
+    await db.query(`CALL UpdateRacesHorsesById(?, ?, ?);`,
+      [req.params.id, req.body.horse_id, req.body.race_id]);
+
+    res.redirect('/races-horses');
+  } catch (err) {
+    console.error('Error updating horse to race assignment:', err);
+
+    // Handle case where horse is already entered in the race
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.redirect('/races-horses');
+    }
+
+    res.status(500).send('Database error while updating horse to race assignment');
+  }
+});
 
 // Render delete confirmation for a specific race entry
 app.get('/races-horses/delete/:id', async (req, res) => {
@@ -708,17 +722,25 @@ app.post('/horses-sparks/add', async (req, res) => {
 // Edit a horse-spark assignment
 app.get('/horses-sparks/edit/:id', async (req, res) => {
   try {
-    const [results] = await db.query('CALL GetRacesHorsesById(?);', [req.params.id]);
-    const assignmentRows = results[0];
+    // 1. Get the horse-spark assignment
+    const [results] = await db.query(`CALL GetHorsesSparksById(?);`, [req.params.id]);
+    const rows = results[0];
 
-    if (assignmentRows.length === 0) return res.status(404).send('Assignment not found');
+    if (rows.length === 0) {
+      return res.status(404).send('Horse Spark combination not found');
+    }
 
-    const assignment = assignmentRows[0];
+    const assignment = rows[0];
 
-    const [horses] = await db.query('SELECT horse_id, name FROM Horses ORDER BY name');
-    const [sparks] = await db.query('SELECT spark_id, name FROM Sparks ORDER BY name');
+    // 2. Get all horses and sparks
+    const [horses] = await db.query(
+      'SELECT horse_id, name FROM Horses ORDER BY name;'
+    );
+    const [sparks] = await db.query(
+      'SELECT spark_id, name FROM Sparks ORDER BY name;'
+    );
 
-    // Mark the selected horse and spark
+    // 3. Mark which horse and spark should be selected
     horses.forEach(horse => {
       horse.selected = horse.horse_id === assignment.horse_id ? 'selected' : '';
     });
@@ -727,15 +749,31 @@ app.get('/horses-sparks/edit/:id', async (req, res) => {
       spark.selected = spark.spark_id === assignment.spark_id ? 'selected' : '';
     });
 
+    // 4. Render the edit page
     res.render('horses-sparks_edit', {
-      title: 'Edit Horses to Sparks',
-      assignment,
-      horses,
-      sparks
-    });
+      title: 'Edit Horse Spark Assignment', assignment, horses, sparks, });
   } catch (err) {
     console.error(err);
     res.status(500).send('Error loading edit horse-spark page');
+  }
+});
+
+// Post edits to horse spark intersection
+app.post('/horses-sparks/edit/:id', async (req, res) => {
+  try {
+    await db.query(`CALL UpdateHorsesSparksById(?, ?, ?);`,
+      [req.params.id, req.body.horse_id, req.body.spark_id]);
+
+    res.redirect('/horses-sparks');
+  } catch (err) {
+    console.error('Error updating spark to horse assignment:', err);
+
+    // Handle case where spark is already assigned to horse
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.redirect('/horses-sparks');
+    }
+
+    res.status(500).send('Database error while updating spark to horse assignment');
   }
 });
 
