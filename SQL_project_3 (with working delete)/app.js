@@ -155,7 +155,7 @@ app.post('/races/add', async (req, res) => {
     res.redirect('/races');
   }
   catch (err) {
-    console.error('Error adding horse:', err);
+    console.error('Error adding race:', err);
     res.status(500).send('Database error while adding race');
   }
 });
@@ -313,7 +313,7 @@ app.post('/sparks/add', async (req, res) => {
     res.redirect('/sparks');
   }
   catch (err) {
-    console.error('Error adding horse:', err);
+    console.error('Error adding spark:', err);
     res.status(500).send('Database error while adding spark');
   }
 });
@@ -389,6 +389,24 @@ app.get('/races-horses/add', async (req, res) => {
   } catch (err) {
     console.error('Error loading horses or races for add:', err);
     res.status(500).send('Database error while loading horses or races.');
+  }
+});
+
+// Enter horse in a race
+app.post('/races-horses/add', async (req, res) => {
+  try {
+    await db.query(`CALL InsertRacesHorses(?, ?);`, [req.body.horse_id, req.body.race_id]);
+
+    res.redirect('/races-horses');
+  } catch (err) {
+    console.error('Error adding horse-race relationship:', err);
+
+    // Handle case where horse is already entered in the race
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.redirect('/races-horses');
+    }
+    
+    res.status(500).send('Database error while entering horse in race');
   }
 });
 
@@ -494,6 +512,24 @@ app.get('/horses-sparks/add', async (req, res) => {
     }
 });
 
+// Post a new horse-spark assignment
+app.post('/horses-sparks/add', async (req, res) => {
+  try {
+    await db.query(`CALL InsertHorsesSparks(?, ?);`, [req.body.horse_id, req.body.spark_id]);
+
+    res.redirect('/horses-sparks');
+  } catch (err) {
+    console.error('Error assigning a spark to a horse:', err);
+
+    // Handle case where spark already assigned to the horse in question
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.redirect('/horses-sparks');
+    }
+
+    res.status(500).send('Database error while assigning a spark to a horse');
+  }
+});
+
 // Edit a horse-spark assignment
 app.get('/horses-sparks/edit/:id', async (req, res) => {
   try {
@@ -559,6 +595,8 @@ app.post('/horses-sparks/delete/:id', async (req, res) => {
     res.status(500).send('Database error while deleting assignment: ' + err.message);
   }
 });
+
+
 
 // =================== RESET ROUTE =========================
 

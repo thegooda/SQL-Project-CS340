@@ -467,3 +467,27 @@ BEGIN
         VALUES (spark_name_input, stat_boosted_input, star_amount_input);
 END //
 DELIMITER ;
+
+-- INSERT into RacesHorses
+DROP PROCEDURE IF EXISTS `InsertRacesHorses`;
+DELIMITER //
+CREATE PROCEDURE InsertRacesHorses(
+                    IN horse_id_input INT,
+                    IN race_id_input INT)
+BEGIN
+    INSERT INTO RacesHorses (horse_id, race_id)
+        VALUES (horse_id_input, race_id_input);
+END //
+DELIMITER ;
+
+-- INSERT into HorsesSparks
+DROP PROCEDURE IF EXISTS `InsertHorsesSparks`;
+DELIMITER //
+CREATE PROCEDURE InsertHorsesSparks(
+                    IN horse_id_input INT,
+                    IN spark_id_input INT)
+BEGIN
+    INSERT INTO HorsesSparks (horse_id, spark_id)
+        VALUES (horse_id_input, spark_id_input);
+END //
+DELIMITER ;
