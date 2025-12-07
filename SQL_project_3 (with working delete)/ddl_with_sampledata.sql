@@ -3,7 +3,7 @@
   Project Step 2 Draft: DDL with Sample Insertions
   Team Uma Sim: Tom Haney and Philip Nguyen
 
-  Below CREATE TABLE statements all adopted from the "Forward Engineering" feature included with MySQL Workbench.
+  Below CREATE TABLE statements all adapted from the "Forward Engineering" feature included with MySQL Workbench.
 
   Changes were made to the CONSTRAINT sections for defining foreign keys, namely in the ON DELETE and ON UPDATE behaviors.
   

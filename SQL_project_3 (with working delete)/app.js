@@ -2,6 +2,13 @@
 // Main server file for CS340 Project Step 3
 // Team Uma Sim: Tom Haney and Philip Nguyen
 
+/*
+   The following code, particularly setup code, adapted from the starter code provided in the exploration for Web Application Technology.
+   Link: https://canvas.oregonstate.edu/courses/2017561/pages/exploration-web-application-technology-2?module_item_id=25645131
+
+   Routes were hand written.
+*/
+
 const express = require('express');
 const exphbs = require('express-handlebars');
 const path = require('path');
@@ -23,7 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// ==================== ROUTES ====================
+// ==================== HOME ROUTES ====================
 
 // Home/Index page - lists all available pages
 app.get('/', (req, res) => {

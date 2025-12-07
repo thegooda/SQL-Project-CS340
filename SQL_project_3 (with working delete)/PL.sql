@@ -2,6 +2,13 @@
     CS340
     Project Step 4 Draft: RESET Stored Procedure
     Team Uma Sim: Tom Haney and Philip Nguyen
+
+    As described in the DDL file, many DDL statements were adapted from MySQL Workbench output. See the DDL file for details.
+
+    Otherwise, all SQL In this file was hand written and improved through trial and error.
+
+    Some of this code was originally directly written in app.js, and later moved to stored procedures as described as best practice
+    in the lecture materials.
 */
 
 -- USE `cs340_[insert your id here]` ;
